@@ -98,7 +98,7 @@ class gt:
         m.D = Param('D_' + name, value=self.D)
         m.E = Param('E_' + name, value=self.E)
         m.TRbase = Param('TRbase_' + name, value=self.TRbase)
-        m.ExhTemp = Eqn('Exhaust Temperature' + name, m.Te - (m.TRbase + m.D * (1 - m.qf) + m.E * (1 - m.omega)))
+        m.ExhTemp = Eqn('Exhaust Temperature', m.Te - (m.TRbase + m.D * (1 - m.qf) + m.E * (1 - m.omega)))
 
         # Radiation shield
         m.K1 = Param('K1_' + name, self.K1)
@@ -107,8 +107,8 @@ class gt:
 
         m.Tr = Var('Tr_' + name, value=self.Tr)
         m.Tri = Var('Tri_' + name, self.Tri)
-        m.RS1 = Ode('Radiation Shield1' + name, f=(m.K2 * m.Te - m.Tri) / m.T1, diff_var=m.Tri)
-        m.RS2 = Eqn('Radiation Shield2' + name, m.Tr - (m.K1 * m.Te + m.Tri))
+        m.RS1 = Ode('Radiation Shield1', f=(m.K2 * m.Te - m.Tri) / m.T1, diff_var=m.Tri)
+        m.RS2 = Eqn('Radiation Shield2', m.Tr - (m.K1 * m.Te + m.Tri))
 
         # Thermocouple
         m.T2 = Param('T2_' + name, self.T2)
@@ -123,41 +123,41 @@ class gt:
         m.Tref = Param('Tref_' + name, self.Tref)
         m.qmin = Param('qmin_' + name, self.qmin)
         m.qmax = Param('qmax_' + name, self.qmax)
-        m.TC1 = Ode('Temp controller1' + name, f=AntiWindUp(m.qT, m.qmin, m.qmax, m.Tref - m.Tx), diff_var=m.qT_i)
-        m.TC2 = Eqn('Temp controller2' + name, m.qT - (m.ki * m.qT_i + m.kp * (m.Tref - m.Tx)))
+        m.TC1 = Ode('Temp controller1', f=AntiWindUp(m.qT, m.qmin, m.qmax, m.Tref - m.Tx), diff_var=m.qT_i)
+        m.TC2 = Eqn('Temp controller2', m.qT - (m.ki * m.qT_i + m.kp * (m.Tref - m.Tx)))
 
         # Compressor
         m.Cop = Var('Cop_' + name, value=self.Cop)
         m.TCD = Param('TCD_' + name, self.TCD)
-        m.CompDisc = Ode('Compressor discharge' + name, (m.qf - m.Cop) / m.TCD, diff_var=m.Cop)
+        m.CompDisc = Ode('Compressor discharge', (m.qf - m.Cop) / m.TCD, diff_var=m.Cop)
 
         # Tmec
         m.Tmec = Var('Tmec_' + name, self.Tmec)
         m.A = Param('A_' + name, self.A)
         m.B = Param('B_' + name, self.B)
         m.C = Param('C_' + name, self.C)
-        m.TorqMec = Eqn('Torque mechanic' + name, m.Tmec - (m.A + m.B * m.Cop + m.C * (1 - m.omega)))
-        m.gt_pm = Eqn('Mechanical power' + name, m.Pm - m.Tmec * m.omega)
+        m.TorqMec = Eqn('Torque mechanic', m.Tmec - (m.A + m.B * m.Cop + m.C * (1 - m.omega)))
+        m.gt_pm = Eqn('Mechanical power', m.Pm - m.Tmec * m.omega)
 
         # speed governor
         m.qR = Var('qR_' + name, self.qR)
         m.W = Param('W_' + name, self.W)
         m.TG = Param('TG_' + name, self.TG)
         m.wref = Param('wref_' + name, self.wref)
-        m.SpeedGov = Ode('Speed governor' + name, f=(m.W * (m.wref - m.omega) - m.qR) / m.TG, diff_var=m.qR)
+        m.SpeedGov = Ode('Speed governor', f=(m.W * (m.wref - m.omega) - m.qR) / m.TG, diff_var=m.qR)
 
         # fuel
         m.kNL = Param('kNL_' + name, self.kNL)
         m.qfuel = Var('qfuel_' + name, self.qfuel)
         rhs = m.qfuel - (m.kNL + (1 - m.kNL) * Min(m.qT, Saturation(m.qR, m.qmin, m.qmax)) * m.omega)
-        m.FuelCons = Eqn('Fuel Consumption' + name, rhs)
+        m.FuelCons = Eqn('Fuel Consumption', rhs)
 
         # Valve Positioner
         m.xv = Var('xv_' + name, self.xv)
         m.b = Param('b_' + name, self.b)
-        m.ValPos = Ode('Valve Positioner' + name, (m.qfuel - m.xv) / m.b, diff_var=m.xv)
+        m.ValPos = Ode('Valve Positioner', (m.qfuel - m.xv) / m.b, diff_var=m.xv)
         m.TFS = Param('TFS_' + name, self.TFS)
-        m.FuelDyn = Ode('Fuel Dynamics' + name, (m.xv - m.qf) / m.TFS, diff_var=m.qf)
+        m.FuelDyn = Ode('Fuel Dynamics', (m.xv - m.qf) / m.TFS, diff_var=m.qf)
 
         # Waste heat boiler
         m.phi = Var('phi_' + name, self.phi)

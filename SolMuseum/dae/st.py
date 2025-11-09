@@ -83,14 +83,14 @@ class st:
         m.TRH = Param('TRH_' + name, self.TRH)
         m.volumn1 = Ode('volumn1_' + name, (Saturation(m.mu, m.mu_min, m.mu_max) - m.x1) / m.TCH, m.x1)
         m.volumn2 = Ode('volumn2_' + name, (m.x1 * (1 - m.alpha) - m.x2) / m.TRH, m.x2)
-        m.eqn_Pm = Eqn('eqn_Pm' + name, m.Pm - m.alpha * m.x1 - m.x2)
+        m.eqn_Pm = Eqn('eqn_Pm', m.Pm - m.alpha * m.x1 - m.x2)
 
         # CHP
         m.z = Param('z_' + name, self.z)
         m.eta = Param('eta_' + name, self.eta)
         m.F = Param('F_' + name, self.F)
         m.phi = Var('phi_' + name, self.phi)
-        m.chp = Eqn('chp' + name, m.eta * m.F - m.Pm - m.z * m.phi)
+        m.chp = Eqn('chp', m.eta * m.F - m.Pm - m.z * m.phi)
 
         # temperature control
         m.ki = Param('ki_' + name, self.ki)
@@ -109,7 +109,7 @@ class st:
         m.temp_control1 = Ode('temp_control1_' + name,
                               rhs,
                               m.mu1)
-        m.temp_control2 = Eqn('temp_control2' + name, m.kp * (m.TREF - m.Ts) + m.ki * m.mu1 - m.mu)
+        m.temp_control2 = Eqn('temp_control2', m.kp * (m.TREF - m.Ts) + m.ki * m.mu1 - m.mu)
 
         m = rename_mdl(m, name)
 

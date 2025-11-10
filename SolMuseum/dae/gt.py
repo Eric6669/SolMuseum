@@ -160,9 +160,9 @@ class gt:
         m.FuelDyn = Ode('Fuel Dynamics', (m.xv - m.qf) / m.TFS, diff_var=m.qf)
 
         # Waste heat boiler
-        # m.phi = Var('phi_' + name, self.phi)
-        # m.c = Param('c_' + name, self.c)
-        # m.WastHeatBoiler = Eqn('WastHeatBoiler_' + name, m.phi - m.c * m.Pm)
+        m.phi = Var('phi_' + name, self.phi)
+        m.c = Param('c_' + name, self.c)
+        m.WastHeatBoiler = Eqn('WastHeatBoiler_' + name, m.phi - m.c * m.Pm)
 
         m = rename_mdl(m, name)
 

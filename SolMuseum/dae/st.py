@@ -102,9 +102,9 @@ class st:
         e = m.TREF - m.Ts
         # The current implementation of the Anti-windup limiter handle the ki<0 case.
         rhs = e * Not(Or(And(GreaterThan(m.mu, m.mu_max),
-                             GreaterThan(e, 0)),
+                             LessThan(e, 0)),
                          And(LessThan(m.mu, m.mu_min),
-                             LessThan(e, 0))
+                             GreaterThan(e, 0))
                          ))
         m.temp_control1 = Ode('temp_control1_' + name,
                               rhs,

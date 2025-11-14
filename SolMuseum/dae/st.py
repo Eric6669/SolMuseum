@@ -23,12 +23,10 @@ class st:
         self.name = name
         self.syn = synmach(name, use_coi=use_coi, **kwargs)
 
-        self.Pg = kwargs.get('Pg')
+        self.phi = kwargs.get('phi')
         self.z = kwargs.get('z')
         self.F = kwargs.get('F')
         self.eta = kwargs.get('eta')
-        self.phi = (self.eta * self.F - self.Pg) / self.z
-        kwargs['phi'] = self.phi
 
         self.TREF = kwargs.get('TREF')
         self.alpha = kwargs.get('alpha')

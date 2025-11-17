@@ -45,6 +45,7 @@ class gt:
         self.Tref = kwargs.get('Tref')
         self.c = kwargs.get('c')
         self.kNL = kwargs.get('kNL')
+        self.qbase = kwargs.get('qbase')
 
         self.Tmec = None
         # self.kNL = None
@@ -78,8 +79,10 @@ class gt:
             self.Tref = self.Tx
         self.qT = self.qR
         self.qT_i = (self.qT - self.kp * (self.Tref - self.Tx)) / self.ki
-
         self.phi = self.c * self.syn.Pm
+        if self.kNL is None:
+            qNL = self.syn.Pm * (2.56/170)
+            self.kNL = qNL/self.qbase
 
     def mdl(self):
         self.gt_init()

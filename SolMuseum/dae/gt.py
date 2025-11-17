@@ -44,11 +44,9 @@ class gt:
         self.TFS = kwargs.get('TFS')
         self.Tref = kwargs.get('Tref')
         self.c = kwargs.get('c')
-        self.kNL = kwargs.get('kNL')
-        self.qbase = kwargs.get('qbase')
 
         self.Tmec = None
-        # self.kNL = None
+        self.kNL = None
         self.qT_i = None
         self.qT = None
         # self.Tref = None
@@ -70,7 +68,7 @@ class gt:
         self.qf = self.Cop
         self.xv = self.qf
         self.qfuel = self.xv
-        self.qR = (self.qfuel - self.kNL) / (1 - self.kNL)
+        self.qR = self.W * (self.wref - self.syn.omega)
         self.Te = self.TRbase + self.D * (1 - self.qf) + self.E * (1 - self.syn.omega)
         self.Tri = self.K2 * self.Te
         self.Tr = self.K1 * self.Te + self.Tri
@@ -79,10 +77,11 @@ class gt:
             self.Tref = self.Tx
         self.qT = self.qR
         self.qT_i = (self.qT - self.kp * (self.Tref - self.Tx)) / self.ki
+
+        q = np.minimum(self.qT, np.clip(self.qR, self.qmin, self.qmax))
+        self.kNL = (q - self.qfuel) / (q - 1)
+
         self.phi = self.c * self.syn.Pm
-        if self.kNL is None:
-            qNL = self.syn.Pm * (2.56/170)
-            self.kNL = qNL/self.qbase
 
     def mdl(self):
         self.gt_init()
@@ -150,7 +149,7 @@ class gt:
         # fuel
         m.kNL = Param('kNL_' + name, self.kNL)
         m.qfuel = Var('qfuel_' + name, self.qfuel)
-        rhs = m.qfuel - (m.kNL + (1 - m.kNL) * Min(m.qT, Saturation(m.qR, m.qmin, m.qmax)))
+        rhs = m.qfuel - (m.kNL + (1 - m.kNL) * Min(m.qT, Saturation(m.qR, m.qmin, m.qmax)) * m.omega)
         m.FuelCons = Eqn('Fuel Consumption', rhs)
 
         # Valve Positioner
@@ -168,7 +167,3 @@ class gt:
         m = rename_mdl(m, name)
 
         return m
-
-
-
-
